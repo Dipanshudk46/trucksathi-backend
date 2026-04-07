@@ -1,5 +1,6 @@
 const Driver = require('../models/service')
 const bcrypt = require('bcrypt')
+
 const driverRegistration = async (req, res) => {
     const { name, email, phone, role, password } = req.body
 
@@ -26,6 +27,7 @@ const driverRegistration = async (req, res) => {
     }
 
     const existingPhone = await Driver.findOne({ phone })
+   
     if (existingPhone) {
         return res.status(400).json({
             message: "phone no already exists"

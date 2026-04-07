@@ -1,12 +1,14 @@
 require("dotenv").config()
 const connectDB = require("./config/db")
 const serviceRouter = require('./routes/serviceRoutes')
-
 const express = require("express")
+const authRouter = require('./routes/authRoutes')
 const app = express()
 const port = 3000
+
 app.use(express.json())
 app.use('/api', serviceRouter)
+app.use('/api/auth',authRouter)
 
 
 
