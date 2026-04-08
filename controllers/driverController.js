@@ -47,5 +47,37 @@ const driverRegistration = async (req, res) => {
     res.status(201).json({ message: "User registered successfully" })
 
 }
+const driverProfile = async(req,res)=>{
+try {
+    const userId = req.user.id
+   const driver = await Driver.findById(userId).select('-password')
+   if(!driver){
+    return res.status(400).json({ message: "User  not found" })
+   }
+   res.status(200).json(driver)
+} catch (error) {
+    res.status(500).json({message:error.message})
+}
+}
+const driverProfileUpdate = async (req, res) => {
+    try {
+        const userId = req.user.id
+        const driver = await Driver.findById(userId)
+        if (!driver) {
+            return res.status(404).json({ message: "User not found" })
+        }
+        driver.name = req.body.name || driver.name
+        driver.phone = req.body.phone || driver.phone
 
-module.exports = { driverRegistration }
+        await driver.save()
+
+        res.status(200).json({
+            message: "Driver info updated",
+            driver
+        })
+
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+module.exports = { driverRegistration,driverProfile,driverProfileUpdate }
