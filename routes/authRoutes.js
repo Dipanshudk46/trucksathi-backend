@@ -1,12 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const protect = require('../middleware/authMiddleware')
 
-router.get('/profile',(req,res)=>{
-    res.json({
-        message:"profile accessed successfully",
-        userId : req.Driver
-    })
-})
+const { driverRegistration } = require('../controllers/driverController')
+const { driverLogin } = require('../controllers/authController')
+
+// Auth routes
+router.post('/driver/register', driverRegistration)
+router.post('/driver/login', driverLogin)
 
 module.exports = router

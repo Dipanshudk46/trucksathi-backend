@@ -1,4 +1,4 @@
-const Driver = require('../models/service')
+const Driver = require('../models/driverModel')
 const bcrypt = require('bcrypt')
 
 const driverRegistration = async (req, res) => {
@@ -9,10 +9,10 @@ const driverRegistration = async (req, res) => {
     }
 
     if (!email.includes("@")) {
-        res.status(400).json({ message: "Email is invalid" })
+       return res.status(400).json({ message: "Email is invalid" })
     }
     if (phone.length !== 10) {
-        res.status(400).json({ message: "Invalid phone number" })
+       return res.status(400).json({ message: "Invalid phone number" })
     }
     if (password.length < 8) {
         return res.status(400).json({ message: "Passowrd too short mininum-8 chars" })
