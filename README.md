@@ -1,6 +1,8 @@
 # 🚚 TruckSathi Backend (Work in Progress 🚧)
 
-A backend system built using Node.js, Express, and MongoDB for managing services for truck drivers. This project is actively being developed and improved daily.
+A scalable backend system built using **Node.js, Express, and MongoDB** to solve real-world problems faced by truck drivers — like finding nearby mechanics and essential services.
+
+This project is actively being developed with a focus on **real-world backend architecture, security, and scalability**.
 
 ---
 
@@ -10,6 +12,7 @@ A backend system built using Node.js, Express, and MongoDB for managing services
 * Express.js
 * MongoDB (Mongoose)
 * bcrypt (password hashing)
+* JSON Web Token (JWT)
 
 ---
 
@@ -21,6 +24,7 @@ backend/
 │── controllers/
 │── models/
 │── routes/
+│── middleware/
 │── server.js
 ```
 
@@ -28,50 +32,82 @@ backend/
 
 ## 🚀 Current Features
 
-### ✅ Driver Registration API
+### 🔐 Authentication System
 
-* Register new drivers
-* Input validation (name, email, phone, password)
-* Duplicate check (email & phone)
+* Driver Registration API
+* Driver Login API
 * Password hashing using bcrypt
+* Secure login with JWT
 
 ---
 
-## 🔄 In Progress
+### 🛡️ Authorization (Security)
 
-* Login API (authentication system)
-* Password verification using bcrypt.compare
+* Protected routes using middleware
+* Token verification (JWT)
+* Secure access to private APIs
 
 ---
 
-## 📌 API Endpoint
+### 👤 Driver Profile System
 
-### Register Driver
+* Get logged-in driver profile
+* Update driver details (name, phone)
+* Secure data handling (password hidden)
 
-POST `/api/driver/register`
+---
+
+### ✅ Validations & Error Handling
+
+* Input validation (email, phone, password)
+* Duplicate checks (email & phone)
+* Proper status codes and error responses
+* Try-catch based error handling
+
+---
+
+## 📌 API Endpoints
+
+### 🔐 Auth Routes
+
+```
+POST /api/auth/driver/register
+POST /api/auth/driver/login
+```
+
+### 👤 Driver Routes (Protected)
+
+```
+GET /api/profile
+PUT /api/profile
+```
 
 ---
 
 ## 🧠 What I'm Learning
 
 * Backend architecture (MVC pattern)
-* API design and validation
-* MongoDB integration
-* Debugging and error handling
-* Secure password handling
+* Authentication & authorization (JWT)
+* Middleware design and flow
+* MongoDB queries and data handling
+* Debugging real-world backend issues
+* Writing scalable and clean backend code
 
 ---
 
 ## 📈 Upcoming Features
 
-* JWT Authentication
-* Role-based access (driver/mechanic)
-* Protected routes
-* Driver services (mechanic search, etc.)
+* 📍 Location-based services (nearby mechanics)
+* 🧰 Mechanic module (registration + services)
+* 📊 Role-based access (driver / mechanic)
+* 🗺️ Google Maps integration
+* 📱 Frontend integration
 
 ---
 
 ## 👨‍💻 Author
 
-Dipanshu
+**Dipanshu**
 Backend Developer in Progress 🚀
+
+---
