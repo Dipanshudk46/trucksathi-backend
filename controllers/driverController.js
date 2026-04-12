@@ -15,7 +15,7 @@ const driverRegistration = async (req, res) => {
        return res.status(400).json({ message: "Invalid phone number" })
     }
     if (password.length < 8) {
-        return res.status(400).json({ message: "Passowrd too short mininum-8 chars" })
+        return res.status(400).json({ message: "Password too short minimum-8 chars" })
     }
 
     const existingEmail = await Driver.findOne({ email })

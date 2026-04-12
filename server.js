@@ -8,9 +8,8 @@ const port = 3000
 
 app.use(express.json())
 
-app.use('/api/auth', driverRoutes)
+app.use('/api', driverRoutes)
 app.use('/api/auth',authRouter)
-
 
 
 
