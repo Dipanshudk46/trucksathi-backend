@@ -1,4 +1,4 @@
-# 🚚 TruckSathi Backend (Work in Progress 🚧)
+# 🚚 TruckSathi Backend (Work in Progress )
 
 A scalable backend system built using **Node.js, Express, and MongoDB** to solve real-world problems faced by truck drivers — like finding nearby mechanics and essential services.
 
