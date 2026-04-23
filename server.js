@@ -3,6 +3,7 @@ const connectDB = require("./config/db")
 const driverRoutes = require('./routes/driverRoutes')
 const express = require("express")
 const authRouter = require('./routes/authRoutes')
+const mechanicRoutes= require('./routes/mechanicRoutes')
 const app = express()
 const port = 3000
 
@@ -10,6 +11,7 @@ app.use(express.json())
 
 app.use('/api', driverRoutes)
 app.use('/api/auth',authRouter)
+app.use('/api',mechanicRoutes)
 
 
 

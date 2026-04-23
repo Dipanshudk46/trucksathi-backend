@@ -5,7 +5,7 @@ const createMechanic = async (req,res)=>{
     try{
         const {name,phone,email,password,shopName,services,location}=req.body   
 
-        if(!name || !phone || !email || !password ||!shopName || !services || !location  ) {
+        if(!name || !phone || !email || !password ||!shopName || !services || !location ) {
            return res.status(400).json({message:"All fields must be provided"})
         }
         if(!email.includes("@")|| email.includes(" ")){
@@ -21,10 +21,14 @@ const createMechanic = async (req,res)=>{
         if(!Array.isArray(services)){
             return res.status(400).json({message:"Services must be an array"})
         }
-        if(!location || location.lat === undefined || location.lng === undefined){
-            return res.status(400).json({message:"Location must include both latitude and longitude"})
+        const {lat,lng} = location
+       if(lat === undefined || lng === undefined){
+             return res.status(400).json({message:"Location must include both latitude and longitude"})
         }
         
+        if(isNaN(parseFloat(lat)) || isNaN(parseFloat(lng))){
+            return res.status(400).json({message:"Invalid latitude or Longitude"})
+        }
         const existingMechanicEmail = await Mechanic.findOne({email})
         if(existingMechanicEmail){
             return res.status(400).json({message:"Email already registered"})
@@ -44,7 +48,10 @@ const createMechanic = async (req,res)=>{
             password:hashedPassword,
             shopName,
             services,
-            location,
+            location:{
+                type:"Point",
+                coordinates:[parseFloat(lng),parseFloat(lat)]
+            },
             role:"mechanic"
         })
         await newMechanic.save()
@@ -63,5 +70,61 @@ const createMechanic = async (req,res)=>{
     }
  
 }
+const searchNearbBy = async(req,res)=>{
+try{
+const {lat,lng} = req.query;
+if(!lat || !lng){
+    return res.status(400).json({message:"Latitude and longitude are required"})
+}
+const latitude = parseFloat(lat)
+const longitude = parseFloat(lng)
+if(latitude < -90 || latitude > 90 ){
+    return res.status(400).json({message:"Latitude is Invalid"})
+}
+if(isNaN(latitude) || isNaN(longitude)){
+    return res.status(400).json({message:"Invalid coordinate format"})
+}
+if(longitude <-180 || longitude > 180){
+    return res.status(400).json({message:"Longitude is Invalid"})
+}
 
-module.exports = {createMechanic}
+const mechanics = await Mechanic.aggregate([
+  {
+    $geoNear: {
+      near: {
+        type: "Point",
+        coordinates: [longitude, latitude]
+      },
+      distanceField: "distance",
+      spherical: true,
+      maxDistance: 5000,
+      distanceMultiplier: 0.001
+    }
+  },
+  {
+   $project: {
+  name: 1,
+  email: 1,
+  phone: 1,
+  shopName: 1,
+  services: 1,
+  location: 1,
+  role: 1,
+  distance: { $round: ["$distance", 2]  }
+}
+  }
+]);
+
+res.status(200).json({
+    success: true,
+    count:mechanics.length,
+    data:mechanics
+})
+}
+
+catch(error){
+    res.status(500).json({message:error.message})
+}
+
+}
+module.exports = {createMechanic,searchNearbBy}
