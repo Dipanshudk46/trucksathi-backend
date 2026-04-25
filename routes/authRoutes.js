@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 const { driverRegistration } = require('../controllers/driverController')
-const { driverLogin } = require('../controllers/authController')
+const { driverLogin , mechanicLogin} = require('../controllers/authController')
 const {createMechanic} = require('../controllers/mechanicController')
 
 // Auth routes
@@ -13,5 +13,7 @@ router.post('/driver/login', driverLogin)
 
 //Mechainc
 router.post('/mechanic/register',createMechanic)
+router.post('/mechanic/login',mechanicLogin)
+
 
 module.exports = router
