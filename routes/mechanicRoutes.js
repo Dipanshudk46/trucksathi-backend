@@ -1,10 +1,11 @@
 const express  = require('express')
 const router = express.Router()
 const {searchNearbBy,mechanicProfile} = require('../controllers/mechanicController')
-const protect = require('../middleware/authMiddleware')
+const authMiddleware = require('../middleware/authMiddleware')
+const authorize = require('../middleware/authorize')
 
-router.get('/mechanic/profile',protect,mechanicProfile)
+router.get('/mechanic/profile',authMiddleware,authorize(["mechanic"]),mechanicProfile)
 
-router.get('/nearby',searchNearbBy)
+router.get('/nearby',authMiddleware,authorize(["mechanic"]),searchNearbBy)
 
 module.exports = router

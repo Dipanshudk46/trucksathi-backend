@@ -24,7 +24,7 @@ const driverLogin = async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: user._id },
+            { id: user._id, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: "7d" }
         )
@@ -56,7 +56,7 @@ const mechanicLogin = async (req,res) => {
             return res.status(400).json({message:"Invalid credentials"})
         }
         const token = jwt.sign(
-            {id:user._id},
+            {id:user._id, role:user.role},
             process.env.JWT_SECRET, 
             {expiresIn:"7d"}
         )
