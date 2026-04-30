@@ -85,6 +85,21 @@ const mechanicProfile = async (req,res) => {
 
 
 }
+const mechanicProfileUpdate = async(req,res)=>{
+    try {
+        const userId = req.user.id
+        const mechanic = await Mechanic.findById(userId)
+        if(!mechanic){
+            return res.status(404).json({message:"User not found"})
+        }
+        mechanic.name = req.body.name || mechanic.name
+        mechanic.phone = req.body.phone || mechanic.phone
+
+        await mechanic.save()
+    } catch (error) {
+        res.status(500).json({message:error.message})
+    }
+}
 const searchNearbBy = async (req, res) => {
     try {
         const { lat, lng } = req.query;
@@ -142,4 +157,4 @@ const searchNearbBy = async (req, res) => {
     }
 
 }
-module.exports = { createMechanic, searchNearbBy, mechanicProfile}
+module.exports = { createMechanic, searchNearbBy, mechanicProfile,mechanicProfileUpdate}
