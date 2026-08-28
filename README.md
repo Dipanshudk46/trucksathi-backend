@@ -1,113 +1,78 @@
-# 🚚 TruckSathi Backend (Work in Progress )
+# 🚚 TruckSathi Backend
 
-A scalable backend system built using **Node.js, Express, and MongoDB** to solve real-world problems faced by truck drivers — like finding nearby mechanics and essential services.
+A **backend-focused roadside assistance platform** built with **Node.js, Express.js, and MongoDB** to help truck drivers find nearby mechanics during breakdown emergencies.
 
-This project is actively being developed with a focus on **real-world backend architecture, security, and scalability**.
+TruckSathi focuses on secure authentication, role-based access control, and location-aware mechanic discovery.
 
----
+## 🚀 Features
 
-## ⚙️ Tech Stack
+* 🔐 **JWT Authentication** — Secure registration and login
+* 🔑 **RBAC** — Separate permissions for Drivers and Mechanics
+* 🔒 **bcrypt** — Secure password hashing
+* 👤 **Profile Management** — Protected user profile APIs
+* 📍 **Geospatial Search** — Find nearby mechanics using GeoJSON, `2dsphere` and `$geoNear`
+* 🛡️ **Protected Routes** — Authentication and authorization middleware
+* ⚠️ **Error Handling** — Meaningful HTTP status codes and API error responses
+* 🗄️ **MongoDB + Mongoose** — Document-based data management
 
-* Node.js
-* Express.js
-* MongoDB (Mongoose)
-* bcrypt (password hashing)
-* JSON Web Token (JWT)
+## 🏗️ Architecture
 
----
-
-## 📁 Project Structure
-
+```text
+Client
+  ↓
+Express Routes
+  ↓
+Auth Middleware
+  ↓
+RBAC Middleware
+  ↓
+Controllers
+  ↓
+Mongoose
+  ↓
+MongoDB
 ```
-backend/
-│── config/
-│── controllers/
-│── models/
-│── routes/
-│── middleware/
-│── server.js
-```
 
----
+## 🛠️ Tech Stack
 
-## 🚀 Current Features
+**Backend:** Node.js, Express.js
+**Database:** MongoDB, Mongoose
+**Authentication:** JWT, bcrypt
+**Location:** GeoJSON, MongoDB Geospatial Queries
 
-### 🔐 Authentication System
+## 📌 API
 
-* Driver Registration API
-* Driver Login API
-* Password hashing using bcrypt
-* Secure login with JWT
+### Authentication
 
----
-
-### 🛡️ Authorization (Security)
-
-* Protected routes using middleware
-* Token verification (JWT)
-* Secure access to private APIs
-
----
-
-### 👤 Driver Profile System
-
-* Get logged-in driver profile
-* Update driver details (name, phone)
-* Secure data handling (password hidden)
-
----
-
-### ✅ Validations & Error Handling
-
-* Input validation (email, phone, password)
-* Duplicate checks (email & phone)
-* Proper status codes and error responses
-* Try-catch based error handling
-
----
-
-## 📌 API Endpoints
-
-### 🔐 Auth Routes
-
-```
+```http
 POST /api/auth/driver/register
 POST /api/auth/driver/login
 ```
 
-### 👤 Driver Routes (Protected)
+### Profile
 
-```
+```http
 GET /api/profile
 PUT /api/profile
 ```
 
----
+### Mechanic Discovery
 
-## 🧠 What I'm Learning
+Location-based APIs for finding nearby mechanics using MongoDB geospatial queries.
 
-* Backend architecture (MVC pattern)
-* Authentication & authorization (JWT)
-* Middleware design and flow
-* MongoDB queries and data handling
-* Debugging real-world backend issues
-* Writing scalable and clean backend code
+## 📈 Future Improvements
 
----
-
-## 📈 Upcoming Features
-
-* 📍 Location-based services (nearby mechanics)
-* 🧰 Mechanic module (registration + services)
-* 📊 Role-based access (driver / mechanic)
-* 🗺️ Google Maps integration
-* 📱 Frontend integration
-
----
+* Google Maps integration
+* Real-time location tracking
+* Mechanic services & availability
+* Notifications
+* Automated testing
+* Rate limiting & production monitoring
+* Redis-based optimization where required
 
 ## 👨‍💻 Author
 
 **Dipanshu**
-Backend Developer in Progress 🚀
+Backend Developer | Node.js | Express.js | MongoDB
 
----
+> **TruckSathi — Connecting truck drivers with nearby roadside assistance. 🚚**
