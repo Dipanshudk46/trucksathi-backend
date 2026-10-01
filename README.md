@@ -1,213 +1,397 @@
-# TruckSathi Backend
+# 🚛 TruckSathi
 
-TruckSathi is a roadside assistance platform connecting truck drivers with mechanics. The backend handles user authentication, nearby mechanic discovery, service request lifecycles, and admin operations.
+### Roadside assistance, built for the road.
 
----
+TruckSathi is a backend-powered roadside assistance platform designed to connect **truck drivers with nearby mechanics** when they need help on the road.
 
-## Tech Stack
+Instead of searching for a mechanic manually, drivers can discover available mechanics based on location, request assistance, and track the service request through its lifecycle.
 
-* **Runtime**: Node.js (v18+)
-* **Framework**: Express.js (v5)
-* **Database**: MongoDB with Mongoose ODM (v9)
-* **Authentication**: JSON Web Token (`jsonwebtoken`)
-* **Password Hashing**: `bcrypt`
-* **Validation**: `joi`
-* **Configuration**: `dotenv`
-* **CORS**: `cors`
+> **Built with Node.js, Express.js, MongoDB and JWT — with a layered backend architecture designed for scalability and maintainability.**
 
 ---
 
-## Architecture
+## 🛣️ The Problem
 
-The codebase follows a layered architecture:
+A truck breakdown can mean:
 
-```text
-HTTP Request
-    ↓
-Routes (/src/routes)
-    ↓
-Middleware (/src/middleware)
-    ↓
-Controllers (/src/controllers)
-    ↓
-Services (/src/services)
-    ↓
-Repositories (/src/repositories)
-    ↓
-Models (/src/models)
-    ↓
-MongoDB
-```
+- ⏱️ Lost time
+- 💰 Lost income
+- 📍 Difficulty finding a nearby mechanic
+- 📞 Multiple calls to find someone available
+- 🚚 Delays in delivering cargo
 
-### Error Handling
-
-All errors (operational AppErrors, validation failures, database errors, and unexpected exceptions) pass through the centralized error middleware:
-
-```text
-Error
-  ↓
-Error Middleware (/src/middleware/errorHandler.Middleware.js)
-  ↓
-Standard JSON Response ({ success: false, message, code })
-```
+TruckSathi focuses on solving the **mechanic discovery and service coordination** part of this problem.
 
 ---
 
-## Project Structure
+## ⚙️ How TruckSathi Works
 
 ```text
+        🚛 DRIVER
+            │
+            │ Creates assistance request
+            ▼
+     ┌─────────────────┐
+     │    TruckSathi   │
+     │     Backend     │
+     └────────┬────────┘
+              │
+              │ Finds nearby
+              │ available mechanics
+              ▼
+        🔧 MECHANIC
+              │
+              │ Accepts request
+              ▼
+        🛠️ ASSISTANCE
+              │
+              ▼
+          ✅ COMPLETED
+Service Request Lifecycle
+PENDING
+   │
+   ├──→ ACCEPTED
+   │       │
+   │       └──→ IN_PROGRESS
+   │                │
+   │                └──→ COMPLETED
+   │
+   ├──→ REJECTED
+   │
+   └──→ CANCELLED
+
+The backend controls these transitions and prevents invalid state changes.
+
+🧠 What I Built
+
+This project goes beyond basic CRUD APIs.
+
+🔐 Authentication & Authorization
+Driver registration/login
+Mechanic registration/login
+Admin authentication
+JWT-based authentication
+Role-based access control
+Password hashing with bcrypt
+📍 Location-Based Mechanic Discovery
+
+Drivers can search for nearby mechanics using MongoDB's geospatial capabilities.
+
+The system uses:
+
+2dsphere indexes
+MongoDB $geoNear
+Radius-based searching
+Mechanic availability status
+
+This allows the backend to find mechanics based on their geographic location.
+
+🔄 Service Request Management
+
+A complete request lifecycle is implemented:
+
+Driver creates request
+        ↓
+Pending
+        ↓
+Mechanic accepts
+        ↓
+Accepted
+        ↓
+Mechanic starts assistance
+        ↓
+In Progress
+        ↓
+Service completed
+
+Requests can also be rejected or cancelled according to the implemented rules.
+
+🛡️ Security
+
+The backend includes:
+
+JWT Bearer authentication
+Role-based authorization
+Joi input validation
+Password hashing
+Ownership checks
+Centralized error handling
+Production error masking
+📊 Admin & Analytics
+
+The backend also provides administrative capabilities including:
+
+User management
+Driver statistics
+Mechanic statistics
+Service request statistics
+Dashboard metrics
+Visitor analytics
+7-day traffic trends
+🏗️ Backend Architecture
+
+TruckSathi follows a layered architecture:
+
+                    CLIENT
+                      │
+                      ▼
+                 ┌─────────┐
+                 │  ROUTES │
+                 └────┬────┘
+                      │
+                      ▼
+               ┌────────────┐
+               │ MIDDLEWARE │
+               └─────┬──────┘
+                     │
+                     ▼
+              ┌─────────────┐
+              │ CONTROLLERS │
+              └──────┬──────┘
+                     │
+                     ▼
+               ┌──────────┐
+               │ SERVICES │
+               └────┬─────┘
+                    │
+                    ▼
+             ┌──────────────┐
+             │ REPOSITORIES │
+             └───────┬──────┘
+                     │
+                     ▼
+                ┌─────────┐
+                │ MODELS  │
+                └────┬────┘
+                     │
+                     ▼
+                  MongoDB
+Layer Responsibilities
+Layer	Responsibility
+Routes	Define API endpoints
+Middleware	Authentication, authorization & error handling
+Controllers	Handle HTTP requests and responses
+Services	Business logic
+Repositories	Database operations
+Models	MongoDB schemas
+Validators	Request validation
+Utils	Reusable backend utilities
+Config	Environment and application configuration
+📂 Project Structure
 trucksathi-backend/
+│
 ├── src/
-│   ├── config/          # Environment, constants, database connection, seed script
-│   ├── controllers/     # HTTP request handling and response formatting
-│   ├── middleware/      # Auth, role authorization, and centralized error handling
-│   ├── models/          # Mongoose schemas (Driver, Mechanic, Admin, ServiceRequest, Visit)
-│   ├── repositories/    # Database queries and persistence logic
-│   ├── routes/          # Express route definitions
-│   ├── services/        # Business logic and lifecycle state transitions
-│   ├── utils/           # Helper utilities (AppError, apiResponse, jwt, password)
-│   └── validators/      # Joi schemas and validation middleware
-├── tests/               # Unit, integration, security, and lifecycle tests
-├── .env.example         # Environment template
-├── .gitignore           # Git ignore rules
-├── package.json         # Dependencies and npm scripts
-├── README.md            # Documentation
-└── server.js            # Application entry point
-```
+│   ├── config/
+│   │   ├── constants.config.js
+│   │   ├── db.config.js
+│   │   ├── env.config.js
+│   │   └── seedAdmin.config.js
+│   │
+│   ├── controllers/
+│   │   ├── admin.Controller.js
+│   │   ├── analytics.Controller.js
+│   │   ├── auth.Controller.js
+│   │   ├── driver.Controller.js
+│   │   ├── mechanic.Controller.js
+│   │   └── request.Controller.js
+│   │
+│   ├── middleware/
+│   │   ├── auth.Middleware.js
+│   │   ├── authorize.Middleware.js
+│   │   └── errorHandler.Middleware.js
+│   │
+│   ├── models/
+│   ├── repositories/
+│   ├── routes/
+│   ├── services/
+│   ├── utils/
+│   └── validators/
+│
+├── tests/
+├── server.js
+├── package.json
+├── package-lock.json
+├── .env.example
+├── .gitignore
+└── README.md
+🛠️ Tech Stack
+Technology	Purpose
+Node.js	Backend runtime
+Express.js	REST API framework
+MongoDB	Database
+Mongoose	MongoDB ODM
+JWT	Authentication
+bcrypt	Password hashing
+Joi	Request validation
+dotenv	Environment configuration
+CORS	Cross-origin requests
+🔌 API Overview
 
----
+All APIs are prefixed with:
 
-## Environment Setup
+/api
+🔐 Authentication
+POST /api/auth/driver/register
+POST /api/auth/driver/login
 
-1. Copy `.env.example` to create your local `.env`:
-   ```bash
-   cp .env.example .env
-   ```
+POST /api/auth/mechanic/register
+POST /api/auth/mechanic/login
 
-2. Configure the required environment variables:
-   ```env
-   # Server
-   PORT=3000
-   NODE_ENV=development
+POST /api/admin/login
+🚛 Driver
+GET /api/driver/profile
+PUT /api/update/driver/profile
+🔧 Mechanic
+GET   /api/mechanic/profile
+PUT   /api/update/mechanic/profile
+PATCH /api/mechanic/availability
+GET   /api/nearby
+🛠️ Service Requests
+POST  /api/requests
+GET   /api/requests/driver
+GET   /api/requests/mechanic
+GET   /api/requests/:requestId
 
-   # Database
-   MONGO_URI=mongodb+srv://<username>:<password>@cluster0.example.mongodb.net/trucksathi?retryWrites=true&w=majority
+PATCH /api/requests/:requestId/accept
+PATCH /api/requests/:requestId/reject
+PATCH /api/requests/:requestId/start
+PATCH /api/requests/:requestId/complete
+PATCH /api/requests/:requestId/cancel
+📊 Administration
+GET /api/admin/dashboard
+GET /api/admin/users
+GET /api/admin/drivers
+GET /api/admin/mechanics
+GET /api/admin/requests
+GET /api/admin/analytics
+📈 Analytics
+POST /api/analytics/visit
+🔒 Security Architecture
 
-   # Authentication
-   JWT_SECRET=your_jwt_secret_key_here
-   JWT_EXPIRES_IN=7d
+TruckSathi implements multiple layers of backend protection:
 
-   # Default Admin Seeding
-   ADMIN_EMAIL=admin@trucksathi.com
-   ADMIN_PASSWORD=your_admin_password
-   ```
+Request
+   │
+   ▼
+JWT Authentication
+   │
+   ▼
+Role Authorization
+   │
+   ▼
+Joi Validation
+   │
+   ▼
+Controller
+   │
+   ▼
+Business Logic
+   │
+   ▼
+Ownership Verification
+   │
+   ▼
+Database
 
----
+The backend also uses centralized error handling so API errors follow a consistent response structure.
 
-## Getting Started
+🧪 Testing
 
-### Install Dependencies
-```bash
-npm install
-```
+The project contains tests covering:
 
-### Run the Server
-```bash
-# Start in development mode with nodemon
-npm run dev
+Service layer
+Controllers
+Routes and middleware
+Security
+Error handling
+Driver experience
+Request lifecycle
+Rejection flow
+Completion flow
+End-to-end behaviour
 
-# Start in production mode
-npm start
-```
+Run the complete test suite:
 
----
-
-## Testing
-
-The test suite covers service logic, controllers, routes, error handling, security, and the complete service request lifecycle:
-
-```bash
-# Run unit and integration suites (services, controllers, routes, security, errors)
-npm run test:services
-npm run test:controllers
-npm run test:routes
-npm run test:security
-npm run test:error
-
-# Run end-to-end tests (requires server running on port 3000)
-npm run test:lifecycle
-npm run test:driver
-npm run test:e2e
-
-# Run all test suites
 npm run test:all
-```
 
----
+Individual test suites can also be executed through the scripts defined in package.json.
 
-## API Reference
+🚀 Getting Started
+1. Clone the repository
+git clone https://github.com/Dipanshudk46/trucksathi-backend.git
+cd trucksathi-backend
+2. Install dependencies
+npm install
+3. Configure environment variables
 
-All routes are prefixed with `/api`.
+Create a .env file using .env.example:
 
-### 1. Authentication (`/api/auth` and `/api/admin`)
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `POST` | `/api/auth/driver/register` | Public | Register new driver |
-| `POST` | `/api/auth/driver/login` | Public | Driver login (returns JWT and profile) |
-| `POST` | `/api/auth/mechanic/register` | Public | Register mechanic with services and coordinates |
-| `POST` | `/api/auth/mechanic/login` | Public | Mechanic login (returns JWT and profile) |
-| `POST` | `/api/admin/login` | Public | Administrator login |
+PORT=3000
+NODE_ENV=development
 
-### 2. Driver Profile (`/api`)
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `GET` | `/api/driver/profile` | Driver | Get authenticated driver profile |
-| `PUT` | `/api/update/driver/profile` | Driver | Update driver name or phone |
+MONGO_URI=your_mongodb_connection_string
 
-### 3. Mechanic Workshop & Discovery (`/api`)
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `GET` | `/api/mechanic/profile` | Mechanic | Get authenticated mechanic profile |
-| `PUT` | `/api/update/mechanic/profile` | Mechanic | Update mechanic workshop details, services, phone, location |
-| `PATCH`| `/api/mechanic/availability` | Mechanic | Toggle online/offline status |
-| `GET` | `/api/nearby` | Driver, Mechanic | Find online mechanics within radius using 2dsphere search |
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=7d
 
-### 4. Service Requests (`/api`)
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `POST` | `/api/requests` | Driver | Create roadside assistance request |
-| `GET` | `/api/requests/driver` | Driver | List all requests for authenticated driver |
-| `GET` | `/api/requests/mechanic` | Mechanic | List incoming requests for authenticated mechanic |
-| `GET` | `/api/requests/:requestId` | Driver, Mechanic | Get single request details (with ownership check) |
-| `PATCH/POST` | `/api/requests/:requestId/accept` | Mechanic | Accept pending request (`pending` → `accepted`) |
-| `PATCH/POST` | `/api/requests/:requestId/reject` | Mechanic | Reject pending request (`pending` → `rejected`) |
-| `PATCH/POST` | `/api/requests/:requestId/start` | Mechanic | Start assistance (`accepted` → `in_progress`) |
-| `PATCH/POST` | `/api/requests/:requestId/complete` | Mechanic | Mark assistance completed (`in_progress` → `completed`) |
-| `PATCH/POST` | `/api/requests/:requestId/cancel` | Driver, Mechanic | Cancel request (`pending`/`accepted`/`in_progress` → `cancelled`) |
+ADMIN_EMAIL=admin@trucksathi.com
+ADMIN_PASSWORD=your_admin_password
+4. Start development server
+npm run dev
+5. Start production server
+npm start
+📌 Engineering Highlights
 
-### 5. Administration (`/api/admin`)
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `POST` | `/api/admin/login` | Public | Admin login |
-| `GET` | `/api/admin/dashboard` | Admin | Metrics (user counts, request stats, visits) |
-| `GET` | `/api/admin/users` | Admin | User directory with search and role filters |
-| `GET` | `/api/admin/drivers` | Admin | List registered drivers with request counts |
-| `GET` | `/api/admin/mechanics` | Admin | List registered mechanics with request counts |
-| `GET` | `/api/admin/requests` | Admin | List platform requests with status filters |
-| `GET` | `/api/admin/analytics` | Admin | Visitor traffic summary and 7-day trend |
+This project demonstrates practical backend engineering concepts including:
 
-### 6. Visitor Analytics (`/api/analytics`)
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `POST` | `/api/analytics/visit` | Public | Record visitor session beacon (with 15-minute cooldown) |
+REST API design
+Layered backend architecture
+JWT authentication
+Role-based access control
+MongoDB geospatial queries
+2dsphere indexing
+Service request state management
+Repository pattern
+Centralized error handling
+Joi input validation
+Ownership authorization
+Password hashing
+Admin analytics
+Automated testing
+Environment-based configuration
+🗺️ Project Flow
+        🚛 DRIVER
+            │
+            ▼
+   Mechanic Discovery
+            │
+            ▼
+    Service Request
+            │
+            ▼
+       🔧 MECHANIC
+            │
+            ▼
+       Assistance
+            │
+            ▼
+        Completion
+            │
+            ▼
+     📊 Analytics
+👨‍💻 Developer
 
----
+Dipanshu
 
-## Security
+BCA Graduate · Backend Developer
 
-* **Authentication**: JWT verification via Bearer token in the `Authorization` header.
-* **Role-Based Access Control**: Route-level role enforcement (`driver`, `mechanic`, `admin`) via `authorize()` middleware.
-* **Input Validation**: Joi validation on incoming body, params, and query parameters before reaching controllers.
-* **Password Hashing**: `bcrypt` with 10 salt rounds. Passwords are never returned in responses.
-* **Ownership Checks**: Drivers and mechanics can only view and update requests associated with their account.
-* **Error Masking**: In production, unhandled 500 errors return generic messages to avoid leaking internal system details.
+Focus
+Node.js
+Express.js
+MongoDB
+REST APIs
+Backend Architecture
+Authentication
+Database Design
+🚛 TruckSathi
+Helping keep trucks moving.
